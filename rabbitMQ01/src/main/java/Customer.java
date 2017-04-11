@@ -7,8 +7,7 @@ import java.util.concurrent.TimeoutException;
  * Created by liqi1 on 2017/4/11.
  */
 public class Customer {
-    private static final String QUEUE_NAME="rabbitMQ.test";
-    String name = "";
+    private static final String QUEUE_NAME = "task_queue";
 
     public static void main(String[] args) throws IOException, TimeoutException {
         // 创建连接工厂
@@ -19,10 +18,11 @@ public class Customer {
         Connection connection = factory.newConnection();
         //创建一个通道
         Channel channel = connection.createChannel();
-        //声明关注的队列
-        channel.queueDeclare(QUEUE_NAME,false,false,false,null);
-        System.out.println("Customer wait receive Message");
-
+        //声明要关注的队列
+        channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+        System.out.println("Customer Waiting Received messages");
+        //DefaultConsumer类实现了Consumer接口，通过传入一个频道，
+        // 告诉服务器我们需要那个频道的消息，如果频道中有消息，就会执行回调函数handleDelivery
         Consumer consumer = new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope,

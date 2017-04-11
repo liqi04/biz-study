@@ -10,21 +10,26 @@ import java.util.concurrent.TimeoutException;
  * Created by liqi1 on 2017/4/11.
  */
 public class Producer {
-    private static final String QUEUE_NAME="task_queue";
+    private static final String QUEUE_NAME = "task_queue";
 
     public static void main(String[] args) throws IOException, TimeoutException {
-        ConnectionFactory factory=new ConnectionFactory();
+        //创建连接工厂
+        ConnectionFactory factory = new ConnectionFactory();
+        //设置RabbitMQ相关信息
         factory.setHost("localhost");
-        Connection connection=factory.newConnection();
-        Channel channel=connection.createChannel();
-        channel.queueDeclare(QUEUE_NAME,true,false,false,null);
-        //分发信息
-        for (int i=0;i<10;i++){
-            String message="Hello RabbitMQ"+i;
-            channel.basicPublish("",QUEUE_NAME,
-                    MessageProperties.PERSISTENT_TEXT_PLAIN,message.getBytes());
-            System.out.println("NewTask send '"+message+"'");
-        }
+        //factory.setUsername("lp");
+        //factory.setPassword("");
+        // factory.setPort(2088);
+        //创建一个新的连接
+        Connection connection = factory.newConnection();
+        //创建一个通道
+        Channel channel = connection.createChannel();
+        //  声明一个队列        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        String message = "Hello RabbitMQ";
+        //发送消息到队列中
+        channel.basicPublish("", QUEUE_NAME, null, message.getBytes("UTF-8"));
+        System.out.println("Producer Send +'" + message + "'");
+        //关闭通道和连接
         channel.close();
         connection.close();
     }
