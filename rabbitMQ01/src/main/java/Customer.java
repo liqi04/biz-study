@@ -8,6 +8,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class Customer {
     private static final String QUEUE_NAME="rabbitMQ.test";
+    String name = "";
 
     public static void main(String[] args) throws IOException, TimeoutException {
         // 创建连接工厂
