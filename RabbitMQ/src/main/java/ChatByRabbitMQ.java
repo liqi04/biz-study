@@ -12,6 +12,7 @@ public class ChatByRabbitMQ {
     private static final String EXCHANGE_NAME = "chat";
     private static ConnectionFactory factory ;
     private static Connection connection;
+    private String nickname;
 
     static {
         try {
@@ -23,8 +24,6 @@ public class ChatByRabbitMQ {
             e.printStackTrace();
         }
     }
-
-    private String nickname;
 
     public void receiveMessage() throws IOException, TimeoutException {
         Channel recvChannel = getChanel();
@@ -59,17 +58,17 @@ public class ChatByRabbitMQ {
                 System.out.println("Welcome to ChatRoom\n(Type [-q] exit)");
                 System.out.print("Please Input Your Nickname：");
                 nickname = scanner.nextLine();
-                System.out.println("Hello ："+nickname+",Now enjoy Chat!!");
+                System.out.println("Hello ："+nickname+",Now enjoy Chat!");
             }
             String message = scanner.nextLine();
             if(message.equals("-q")){
                 flag =false;
                 message = nickname+" has exit chatroom.";
             }
-            message = StringUtils.join(nickname,":",message);
+            message = StringUtils.join(nickname," said ",message);
             sendChannel.basicPublish(EXCHANGE_NAME, "", MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes("UTF-8"));
         }
-        System.out.println("Exit Succeed");
+        System.out.println("GoodBye ^_^");
         sendChannel.close();
         connection.close();
     }
