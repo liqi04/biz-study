@@ -10,21 +10,33 @@ import java.util.concurrent.TimeoutException;
  */
 public class ChatByRabbitMQ {
     private static final String EXCHANGE_NAME = "chat";
-    private static Channel channel;
-    private static Connection connection;
     private static ConnectionFactory factory ;
+    private static Connection connection;
+
+    static {
+        try {
+            factory = new ConnectionFactory();
+            connection = factory.newConnection();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+    }
+
     private String nickname;
 
     public void receiveMessage() throws IOException, TimeoutException {
-        channel = getChanel();
+        Channel recvChannel = getChanel();
+        recvChannel = getChanel();
         //指定路由类型
-        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.FANOUT);
+        recvChannel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.FANOUT);
         //创建一个匿名队列
-        String queueName = channel.queueDeclare().getQueue();
+        String queueName = recvChannel.queueDeclare().getQueue();
         //绑定
-        channel.queueBind(queueName, EXCHANGE_NAME, "");
+        recvChannel.queueBind(queueName, EXCHANGE_NAME, "");
 
-        Consumer consumer = new DefaultConsumer(channel) {
+        Consumer consumer = new DefaultConsumer(recvChannel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope,
                                        AMQP.BasicProperties properties, byte[] body) throws IOException {
@@ -33,12 +45,12 @@ public class ChatByRabbitMQ {
             }
         };
         //消息自动确认
-        channel.basicConsume(queueName, false, consumer);
+        recvChannel.basicConsume(queueName, false, consumer);
     }
 
     public void sendMessage() throws IOException, TimeoutException {
-        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.FANOUT);
-        channel.basicQos(1);
+        Channel sendChannel = getChanel();
+        sendChannel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.FANOUT);
         boolean flag = true;
         while (flag){
             //绑定路由，指定路由类型
@@ -55,26 +67,22 @@ public class ChatByRabbitMQ {
                 message = nickname+" has exit chatroom.";
             }
             message = StringUtils.join(nickname,":",message);
-            channel.basicPublish(EXCHANGE_NAME, "", MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes("UTF-8"));
+            sendChannel.basicPublish(EXCHANGE_NAME, "", MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes("UTF-8"));
         }
         System.out.println("Exit Succeed");
-        channel.close();
+        sendChannel.close();
         connection.close();
     }
 
     public static Channel getChanel(){
-        factory = new ConnectionFactory();
         factory.setHost("127.0.0.1");
         factory.setPort(5672);
         factory.setUsername("guest");
         factory.setPassword("guest");
         try {
-            connection = factory.newConnection();
-            channel = connection.createChannel();
+            Channel channel = connection.createChannel();
             return channel;
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
             e.printStackTrace();
         }
         return null;
