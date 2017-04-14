@@ -45,30 +45,29 @@ public class ChatByRabbitMQ {
             Scanner scanner = new Scanner(System.in);
             if(StringUtils.isBlank(nickname)){
                 System.out.println("Welcome to ChatRoom\n(Type [-q] exit)");
-                System.out.println("Please Input Your Nickname：");
+                System.out.print("Please Input Your Nickname：");
                 nickname = scanner.nextLine();
                 System.out.println("Hello ："+nickname+",Now enjoy Chat!!");
             }
             String message = scanner.nextLine();
             if(message.equals("-q")){
-                flag=false;
-                message = "Exit Success";
-                break;
+                flag =false;
+                message = nickname+" has exit chatroom.";
             }
             message = StringUtils.join(nickname,":",message);
             channel.basicPublish(EXCHANGE_NAME, "", MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes("UTF-8"));
         }
-
+        System.out.println("Exit Succeed");
         channel.close();
         connection.close();
     }
 
     public static Channel getChanel(){
         factory = new ConnectionFactory();
-        factory.setHost("192.168.2.25");
+        factory.setHost("127.0.0.1");
         factory.setPort(5672);
-        factory.setUsername("tao");
-        factory.setPassword("1234");
+        factory.setUsername("guest");
+        factory.setPassword("guest");
         try {
             connection = factory.newConnection();
             channel = connection.createChannel();
