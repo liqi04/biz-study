@@ -31,11 +31,11 @@ public class StudentMangement extends HttpServlet {
         String action = req.getParameter("action");
         if (StringUtils.equals(action,"listAllStudent")){
             listStudent(req,resp);
-        }else if(StringUtils.equals(action,"addStudent")){
+        }else if(StringUtils.equals(action,"add")){
            addOrUpdateStudent(req,resp);
-        }else if(StringUtils.equals(action,"updateStudent")){
+        }else if(StringUtils.equals(action,"update")){
             addOrUpdateStudent(req,resp);
-        }else if(StringUtils.equals(action,"removeStudent")){
+        }else if(StringUtils.equals(action,"remove")){
             removeStudent(req,resp);
         }
     }
@@ -49,24 +49,30 @@ public class StudentMangement extends HttpServlet {
     protected void listStudent(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{
         int page = Integer.parseInt(req.getParameter("page"));
         List<Map<String,String>> studentList = studentDAO.listStudentByMap(page);
+        int pageCount = studentDAO.getTotalPageCount("user:key",10d);
         req.setAttribute("studentList",studentList);
-        resp.sendRedirect("../index.jsp");
+        req.getSession().setAttribute("page",page);
+        req.setAttribute("pageCount",pageCount);
+        req.getRequestDispatcher("index.jsp").forward(req,resp);
     }
 
 
     protected void addOrUpdateStudent(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{
+        req.setCharacterEncoding("utf-8");
         Student student = new Student();
         student.setId(req.getParameter("id"));
         student.setName(req.getParameter("name"));
         student.setBirthday(LocalDate.parse(req.getParameter("birthday")));
-        student.setAvgscore(Integer.parseInt(req.getParameter("name")));
+        student.setAvgscore(Integer.parseInt(req.getParameter("avgscore")));
         student.setDescription(req.getParameter("description"));
         studentDAO.addOrUpdateStudent(student);
+        resp.sendRedirect("../management?action=listAllStudent&page=1");
     }
 
     protected void removeStudent(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String studentID = req.getParameter("id");
         studentDAO.removeStudent(studentID);
+        resp.sendRedirect("../management?action=listAllStudent&page=1");
     }
 
 }

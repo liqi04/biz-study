@@ -1,5 +1,4 @@
-package java;
-
+package test;
 import dao.StudentDAO;
 import entity.Student;
 
@@ -17,12 +16,11 @@ public class Test {
     public void addStudentTest(){
         LocalDate date = LocalDate.now();
         Student student;
-        for (int i = 0; i <10 ; i++) {
+        for (int i = 0; i <23 ; i++) {
             if(i%2==0){
                 student = new Student(""+i,"user"+i,date,"gghhf",60+2*i);
             }else {
-                student = new Student(""+i,"user"+i,date,"gghhf",60-2*i);
-
+                student = new Student(""+i,"user"+i,date,"gghhf",60+2*i);
             }
             studentDAO.addOrUpdateStudent(student);
         }
@@ -33,5 +31,11 @@ public class Test {
         for (Student student: studentList) {
             System.out.println(student.toString());
         }
+    }
+    @org.junit.Test
+    public void mathTest(){
+        double a =26;
+        double b =10;
+        System.out.println(Math.ceil((a/b)));
     }
 }

@@ -17,7 +17,7 @@ public class StudentDAO {
 
     public void addOrUpdateStudent(Student student){
         jedis = RedisUtil.getJedis();
-        Map<String,String > studentInfo = new HashMap();
+        Map<String,String > studentInfo = new LinkedHashMap();
         studentInfo.put("id",student.getId());
         studentInfo.put("name",student.getName());
         studentInfo.put("birthday",student.getBirthday().toString());
@@ -56,13 +56,19 @@ public class StudentDAO {
 
     public List<Map<String,String>> listStudentByMap(int page) {
         jedis = RedisUtil.getJedis();
-        Set<String> studentKey = jedis.zrange("user:key",(page-1)*PAGE_SIZE,page*PAGE_SIZE-1);
+        Set<String> studentKey = jedis.zrevrange("user:key",(page-1)*PAGE_SIZE,page*PAGE_SIZE-1);
         List<Map<String,String>> studentList = new ArrayList<>();
-        Map<String,String> studentInfo;
+//        Map<String,String> studentInfo;
         for (String students: studentKey) {
-              studentInfo = jedis.hgetAll("user:"+students);
+            Map<String,String> studentInfo = jedis.hgetAll("user:"+students);
             studentList.add(studentInfo);
         }
         return studentList;
+    }
+    public int getTotalPageCount(String key,double pageSize){
+        jedis = RedisUtil.getJedis();
+        long pageCountjedis = jedis.zcard(key);
+        int page = (int) Math.ceil(pageCountjedis/pageSize);
+        return page;
     }
 }
