@@ -66,13 +66,13 @@ public class StudentMangement extends HttpServlet {
         student.setAvgscore(Integer.parseInt(req.getParameter("avgscore")));
         student.setDescription(req.getParameter("description"));
         studentDAO.addOrUpdateStudent(student);
-        resp.sendRedirect("../management?action=listAllStudent&page=1");
+        resp.sendRedirect(req.getContextPath()+"/management?action=listAllStudent&page=1");
     }
 
     protected void removeStudent(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String studentID = req.getParameter("id");
         studentDAO.removeStudent(studentID);
-        resp.sendRedirect("../management?action=listAllStudent&page=1");
+        resp.sendRedirect(req.getContextPath()+"/management?action=listAllStudent&page=1");
     }
 
 }

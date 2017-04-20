@@ -79,14 +79,14 @@
         </tr>
         <c:forEach items="${studentList}" var="students">
             <tr>
-                <td><input type="text" class="info_id" name="id" value="<c:out value='${students.id}'/>" readonly></td>
-                <td><input type="text" class="info" name="name" value="<c:out value='${students.name}'/>" readonly></td>
+                <td><input type="text" class="info_id" name="id" value="<c:out value='${students.id}'/>" disabled></td>
+                <td><input type="text" class="info" name="name" value="<c:out value='${students.name}'/>" disabled></td>
                 <td><input type="text" class="info" name="birthday" value="<c:out value='${students.birthday}'/>"
-                           readonly></td>
+                           disabled></td>
                 <td><input type="text" class="info" name="description" value="<c:out value='${students.description}'/>"
-                           readonly></td>
+                           disabled></td>
                 <td><input type="text" class="info" name="avgscore" value="<c:out value='${students.avgscore}'/>"
-                           readonly></td>
+                           disabled></td>
                 <td class="delete"><a
                         href="${pageContext.request.contextPath}/management?action=remove&id=${students.id}">删除</a></td>
                 <td class="update">修改</td>
@@ -118,7 +118,8 @@
             $("#add").parent().before(newstudent);
         });
         $(".update").click(function () {
-            $(this).parent().find(".info").removeAttr("readonly");
+            $(this).parent().find(".info").removeAttr("disabled");
+            $(this).parent().find(".info_id").removeAttr("disabled").attr("readonly");
             $(this).prev().prev().prev().prev().prev().children().focus();
             $(this).parent().find(".info_id").next().focus();
             $(this).removeClass("update");
