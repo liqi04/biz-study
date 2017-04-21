@@ -39,23 +39,28 @@
             vertical-align: top;
         }
 
-        td input {
+        td input,input:disabled {
             text-align: center;
             width: 100%;
             height: 100%;
-            border: hidden;
+            border: hidden ;
+            background: #ffffff;
         }
 
         a {
             text-decoration: none
-
+        }
+        a:link,a:visited,a:active{
+            color: black;
         }
 
         div a {
             /*border: solid 0.1px black;*/
             text-decoration: none rgba(68, 68, 68, 0.69)
         }
-
+        .update,#add {
+            cursor: hand;
+        }
         .page {
             margin-left: 50%;
         }
@@ -79,12 +84,12 @@
         </tr>
         <c:forEach items="${studentList}" var="students">
             <tr>
-                <td><input type="text" class="info_id" name="id" value="<c:out value='${students.id}'/>" disabled></td>
-                <td><input type="text" class="info" name="name" value="<c:out value='${students.name}'/>" disabled></td>
+                <td><input type="text" class="info_id" name="id" value="<c:out value='${students.id}'/>"  disabled></td>
+                <td><input type="text" class="info" name="name" value="<c:out value='${students.name}'/>"  disabled></td>
                 <td><input type="text" class="info" name="birthday" value="<c:out value='${students.birthday}'/>"
                            disabled></td>
                 <td><input type="text" class="info" name="description" value="<c:out value='${students.description}'/>"
-                           disabled></td>
+                           placeholder="" disabled></td>
                 <td><input type="text" class="info" name="avgscore" value="<c:out value='${students.avgscore}'/>"
                            disabled></td>
                 <td class="delete"><a
@@ -109,21 +114,22 @@
 <script type="text/javascript">
     $(function () {
         $("#add").click(function () {
-            var newstudent = "<tr><td><input type='text' name='id' id='id' ></td>" +
-                "<td><input type='text' name='name' id='name' ></td>" +
-                "<td><input type='text' name='birthday' id='birthday'></td>" +
-                "<td><input type='text' name='description' id='description' ></td>" +
-                "<td><input type='text' name='avgscore' id='avgscore'></td>" +
-                "<td colspan='2' id='addconfim'><input type='submit'></td></tr>";
-            $("#add").parent().before(newstudent);
+                var newstudent = "<tr><td><input type='text' name='id' id='id'  placeholder='ID' ></td>" +
+                    "<td><input type='text' name='name' id='name' placeholder='姓名'></td>" +
+                    "<td><input type='text' name='birthday' id='birthday' placeholder='2017-01-01' ></td>" +
+                    "<td><input type='text' name='description' id='description' ></td>" +
+                    "<td><input type='text' name='avgscore' id='avgscore' placeholder='80'></td>" +
+                    "<td colspan='2' id='addconfim' ><input type='submit' style='cursor: hand'></td></tr>";
+                $("#add").parent().before(newstudent);
+            $(this).unbind();
         });
         $(".update").click(function () {
+            $("input").attr("disabled","true");
             $(this).parent().find(".info").removeAttr("disabled");
-            $(this).parent().find(".info_id").removeAttr("disabled").attr("readonly");
+            $(this).parent().find(".info_id").removeAttr("disabled").attr("readonly","true");
             $(this).prev().prev().prev().prev().prev().children().focus();
-            $(this).parent().find(".info_id").next().focus();
             $(this).removeClass("update");
-            $("#add").unbind().html("<input type='submit'>")
+            $("#add").unbind().html("<input id='add' type='submit'>")
         });
     });
 </script>

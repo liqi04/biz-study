@@ -53,6 +53,7 @@ public final class RedisUtil {
 
     /**
      * 获取Jedis实例
+     *
      * @return
      */
     public synchronized static Jedis getJedis() {
@@ -69,9 +70,5 @@ public final class RedisUtil {
         }
     }
 
-    public static void main(String[] args) {
-        RedisUtil redisUtil = new RedisUtil();
-        Jedis jedis = redisUtil.getJedis();
-    }
 
 }
