@@ -32,7 +32,12 @@ public class StudentMangement extends HttpServlet {
         if (StringUtils.equals(action, "listAllStudent")) {
             listStudent(req, resp);
         } else if (StringUtils.equals(action, "add")) {
-            addOrUpdateStudent(req, resp);
+            if(!studentDAO.isexitStudent(req.getParameter("id"))){
+                addOrUpdateStudent(req, resp);
+            }else {
+                req.setAttribute("errorInfo","该用户已存在！");
+                req.getRequestDispatcher("error.jsp").forward(req,resp);
+            }
         } else if (StringUtils.equals(action, "update")) {
             addOrUpdateStudent(req, resp);
         } else if (StringUtils.equals(action, "remove")) {
@@ -51,7 +56,7 @@ public class StudentMangement extends HttpServlet {
         List<Map<String, String>> studentList = studentDAO.listStudentByMap(page);
         int pageCount = studentDAO.getTotalPageCount("user:key", 10d);
         req.setAttribute("studentList", studentList);
-        req.getSession().setAttribute("page", page);
+        req.setAttribute("page", page);
         req.setAttribute("pageCount", pageCount);
         req.getRequestDispatcher("index.jsp").forward(req, resp);
     }

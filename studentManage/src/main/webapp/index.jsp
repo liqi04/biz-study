@@ -71,7 +71,7 @@
     </style>
 </head>
 <body>
-<form action="${pageContext.request.contextPath}/management?action=add" method="post">
+<form action="${pageContext.request.contextPath}/management?action=add" method="post" accept-charset="utf-8" >
     <table width="698" border="0" cellpadding="0" cellspacing="0" id="studentInfo">
         <tr>
             <th>id</th>
@@ -129,6 +129,7 @@
             $(this).parent().find(".info_id").removeAttr("disabled").attr("readonly","true");
             $(this).prev().prev().prev().prev().prev().children().focus();
             $(this).removeClass("update");
+            $("form").attr("action","${pageContext.request.contextPath}/management?action=update");
             $("#add").unbind().html("<input id='add' type='submit'>")
         });
     });
